@@ -99,6 +99,12 @@ public class Controladora {
     	}
     	this.tabla.setItems(this.datos);
     	this.tabla.refresh();
+    	this.nombreText.setText("");
+    	this.apellidoText.setText("");
+    	this.emailText.setText("");
+    	this.soltero.setSelected(false);
+    	this.hombreRadioB.setSelected(false);
+    	this.mujerRadioB.setSelected(false);
     }
     public void eliminarFila (ActionEvent event){
 		int index = tabla.getSelectionModel().getSelectedIndex();
