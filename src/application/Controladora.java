@@ -94,11 +94,9 @@ public class Controladora {
 
     }
     public void borrarDatos (ActionEvent event){
-    	for (int i=0;i<this.datos.size();i++){
-    		this.datos.remove(i);
-    	}
-    	this.tabla.setItems(this.datos);
-    	this.tabla.refresh();
+    	
+    	this.tabla.setItems(null);
+
     	this.nombreText.setText("");
     	this.apellidoText.setText("");
     	this.emailText.setText("");
