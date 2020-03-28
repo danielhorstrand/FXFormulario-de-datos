@@ -80,6 +80,7 @@ public class Controladora {
         if (this.soltero.isSelected()==true){ 
         	soltero = true;
         }
+
         Persona nueva = new Persona (nombre2,apellido2,email2,sexo,soltero);
         if(this.tabla.getItems().contains(nueva)==true){
 			Alert alert = new Alert (Alert.AlertType.ERROR);
@@ -95,8 +96,6 @@ public class Controladora {
     }
     public void borrarDatos (ActionEvent event){
     	
-    	this.tabla.setItems(null);
-
     	this.nombreText.setText("");
     	this.apellidoText.setText("");
     	this.emailText.setText("");
