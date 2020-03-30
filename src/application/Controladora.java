@@ -22,6 +22,8 @@ public class Controladora {
 	@FXML
 	private Button botonborrar;
 	@FXML
+	private Button botonmodificar;
+	@FXML
 	private Button botoneliminar;
 	@FXML
 	private TextField nombreText;
@@ -82,6 +84,13 @@ public class Controladora {
         }
 
         Persona nueva = new Persona (nombre2,apellido2,email2,sexo,soltero);
+    	this.nombreText.setText("");
+    	this.apellidoText.setText("");
+    	this.emailText.setText("");
+    	this.soltero.setSelected(false);
+    	this.hombreRadioB.setSelected(false);
+    	this.mujerRadioB.setSelected(false);
+    	
         if(this.tabla.getItems().contains(nueva)==true){
 			Alert alert = new Alert (Alert.AlertType.ERROR);
 			alert.setHeaderText(null);
@@ -93,6 +102,45 @@ public class Controladora {
             this.tabla.setItems(this.datos);
 		}
 
+    }
+    public void modificarDatos (ActionEvent event){
+    	
+    	Persona m = this.tabla.getSelectionModel().getSelectedItem();
+    	
+    	if (m == null){
+    		Alert alert = new Alert(Alert.AlertType.ERROR);
+    		alert.setHeaderText(null);
+    		alert.setTitle("Error");
+    		alert.setContentText("Debes seleccionar una persona.");
+    		alert.showAndWait();
+    	}else {
+    		
+        	String nombre2 = this.nombreText.getText();
+            String apellido2 = this.apellidoText.getText();
+            String email2 = this.emailText.getText();
+            Character sexo = 'z';
+            Boolean soltero = false;
+
+            if (this.hombreRadioB.isSelected()==true){
+            	sexo ='H';
+            }else {
+    			sexo='M';
+    		}
+            if (this.soltero.isSelected()==true){ 
+            	soltero = true;
+            }
+
+            Persona aux = new Persona (nombre2,apellido2,email2,sexo,soltero);
+            
+            if (this.datos.contains(aux)==false){
+            	m.setNombre(aux.getNombre());
+            	m.setApellido(aux.getApellido());
+            	m.setEmail(aux.getEmail());
+            	m.setSexo(aux.getSexo());    	
+            	m.setSoltero(soltero);
+            	this.tabla.refresh();
+            }
+		}
     }
     public void borrarDatos (ActionEvent event){
     	
@@ -111,6 +159,12 @@ public class Controladora {
 			this.datos.remove(seleccionada);
 			tabla.setItems(this.datos);
 			this.tabla.refresh();
+	    	this.nombreText.setText("");
+	    	this.apellidoText.setText("");
+	    	this.emailText.setText("");
+	    	this.soltero.setSelected(false);
+	    	this.hombreRadioB.setSelected(false);
+	    	this.mujerRadioB.setSelected(false);
 		}else{
 
 			Alert alert = new Alert(AlertType.ERROR);
