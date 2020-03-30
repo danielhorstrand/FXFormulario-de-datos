@@ -22,8 +22,6 @@ public class Controladora {
 	@FXML
 	private Button botonborrar;
 	@FXML
-	private Button botonmodificar;
-	@FXML
 	private Button botoneliminar;
 	@FXML
 	private TextField nombreText;
@@ -54,6 +52,10 @@ public class Controladora {
 	
 	private final ObservableList<Persona> datos =  FXCollections.observableArrayList();
 	
+	//atributos para codificar la edicion
+	private boolean edicion;
+	private int indiceedicion;
+	
     public void initialize() {
 
     	tabla.setItems(this.datos);
@@ -64,9 +66,11 @@ public class Controladora {
     	sexoColum.setCellValueFactory(new PropertyValueFactory<Persona,Character>("sexo"));
     	solteroColum.setCellValueFactory(new PropertyValueFactory<Persona,Boolean>("soltero"));
     	
+    	edicion = false;
+    	indiceedicion = 0;
     }
     
-    public void guardarDatos(ActionEvent event){
+    public void guardarDatos(){
     	
     	String nombre2 = this.nombreText.getText();
         String apellido2 = this.apellidoText.getText();
@@ -84,65 +88,47 @@ public class Controladora {
         }
 
         Persona nueva = new Persona (nombre2,apellido2,email2,sexo,soltero);
-    	this.nombreText.setText("");
-    	this.apellidoText.setText("");
-    	this.emailText.setText("");
-    	this.soltero.setSelected(false);
-    	this.hombreRadioB.setSelected(false);
-    	this.mujerRadioB.setSelected(false);
     	
-        if(this.tabla.getItems().contains(nueva)==true){
-			Alert alert = new Alert (Alert.AlertType.ERROR);
-			alert.setHeaderText(null);
-			alert.setTitle("Error");
-			alert.setContentText("La persona existe");
-			alert.showAndWait();
-        }else {
-            this.datos.add(nueva);
-            this.tabla.setItems(this.datos);
-		}
-
+        if (edicion==true){
+        	Persona editada = datos.get(indiceedicion);
+        	editada.setNombre(this.nombreText.getText());
+        	editada.setApellido(this.apellidoText.getText());
+        	editada.setEmail(this.emailText.getText());
+       		editada.setSoltero(soltero);
+       		editada.setSexo(sexo);
+       		datos.set(indiceedicion, editada);
+       	}else {
+               this.datos.add(nueva);
+               this.tabla.setItems(this.datos);
+			}
     }
-    public void modificarDatos (ActionEvent event){
+    public void modificarDatos (){
     	
-    	Persona m = this.tabla.getSelectionModel().getSelectedItem();
-    	
-    	if (m == null){
-    		Alert alert = new Alert(Alert.AlertType.ERROR);
-    		alert.setHeaderText(null);
-    		alert.setTitle("Error");
-    		alert.setContentText("Debes seleccionar una persona.");
-    		alert.showAndWait();
-    	}else {
+    	int index = this.tabla.getSelectionModel().getSelectedIndex();
+
+    	if (index>=0){
     		
-        	String nombre2 = this.nombreText.getText();
-            String apellido2 = this.apellidoText.getText();
-            String email2 = this.emailText.getText();
-            Character sexo = 'z';
-            Boolean soltero = false;
-
-            if (this.hombreRadioB.isSelected()==true){
-            	sexo ='H';
-            }else {
-    			sexo='M';
-    		}
-            if (this.soltero.isSelected()==true){ 
-            	soltero = true;
-            }
-
-            Persona aux = new Persona (nombre2,apellido2,email2,sexo,soltero);
-            
-            if (this.datos.contains(aux)==false){
-            	m.setNombre(aux.getNombre());
-            	m.setApellido(aux.getApellido());
-            	m.setEmail(aux.getEmail());
-            	m.setSexo(aux.getSexo());    	
-            	m.setSoltero(soltero);
-            	this.tabla.refresh();
-            }
-		}
+        	edicion = true;
+        	indiceedicion = index;
+        	
+    		Persona m = this.tabla.getSelectionModel().getSelectedItem();
+    		this.nombreText.setText(m.getNombre());
+    		this.apellidoText.setText(m.getApellido());
+    		this.emailText.setText(m.getEmail());
+    		if(m.getSexo()=='M'){
+    			this.mujerRadioB.setSelected(true);
+    		}else {
+    			this.hombreRadioB.setSelected(true);
+			}
+    		if(m.isSoltero()==true){
+    			this.soltero.setSelected(true);
+    		}else {
+				this.soltero.setSelected(false);
+			}
+    	}
+        	
     }
-    public void borrarDatos (ActionEvent event){
+    public void borrarDatos (){
     	
     	this.nombreText.setText("");
     	this.apellidoText.setText("");
@@ -150,8 +136,10 @@ public class Controladora {
     	this.soltero.setSelected(false);
     	this.hombreRadioB.setSelected(false);
     	this.mujerRadioB.setSelected(false);
+    	edicion = false;
+    	indiceedicion = 0;
     }
-    public void eliminarFila (ActionEvent event){
+    public void eliminarFila (){
 		int index = tabla.getSelectionModel().getSelectedIndex();
 		System.out.println(index);
 		if( index >= 0){
@@ -159,12 +147,9 @@ public class Controladora {
 			this.datos.remove(seleccionada);
 			tabla.setItems(this.datos);
 			this.tabla.refresh();
-	    	this.nombreText.setText("");
-	    	this.apellidoText.setText("");
-	    	this.emailText.setText("");
-	    	this.soltero.setSelected(false);
-	    	this.hombreRadioB.setSelected(false);
-	    	this.mujerRadioB.setSelected(false);
+			borrarDatos();
+	    	edicion = false;
+	    	indiceedicion = 0;
 		}else{
 
 			Alert alert = new Alert(AlertType.ERROR);
